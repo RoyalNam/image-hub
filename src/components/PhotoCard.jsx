@@ -1,5 +1,5 @@
-import { useRouter } from 'next/navigation';
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { FaHeart } from 'react-icons/fa';
 
 const PhotoCard = ({ photo }) => {

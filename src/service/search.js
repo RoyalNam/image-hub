@@ -3,12 +3,18 @@ import axios from 'axios';
 const { BASE_URL, ACCESS_KEY } = require('@/constants');
 
 const SEARCH_BASE_URL = `${BASE_URL}/search`;
-export const searchPhotos = async (query, page = 1, collections, color) => {
+export const searchPhotos = async ({ query, page = 1, collections, color }) => {
     try {
-        const respond = await axios.get(
-            `${SEARCH_BASE_URL}/photos?client_id=${ACCESS_KEY}&query=${query}&page=${page}&collections=${collections}&color=${color}`,
-        );
-        return respond.data;
+        const respond = await axios.get(`${SEARCH_BASE_URL}/photos`, {
+            params: {
+                client_id: ACCESS_KEY,
+                query: query,
+                page: page,
+                collections: collections,
+                color: color,
+            },
+        });
+        return respond.data.results;
     } catch (err) {
         throw err;
     }

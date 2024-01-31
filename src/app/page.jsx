@@ -1,10 +1,13 @@
 'use client';
-import PhotoCard from '@/components/PhotoCard';
-import { getPhotos } from '@/service/photos';
 import React, { useEffect, useState } from 'react';
+import PhotosGrid from '@/components/PhotosGrid';
+import { getPhotos } from '@/service/photos';
 
 const Home = () => {
     const [photos, setPhotos] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+
     useEffect(() => {
         const fetchData = async () => {
             const photos = await getPhotos();
@@ -13,13 +16,33 @@ const Home = () => {
         };
         fetchData();
     }, []);
-    return (
-        <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 space-y-4">
-            {photos.map((item) => (
-                <PhotoCard key={item.id} photo={item} />
-            ))}
-        </div>
-    );
+    useEffect(() => {
+        window.addEventListener('scroll', handleScroll);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [loading]);
+
+    const loadMoreMovies = async () => {
+        setLoading(true);
+        const newPage = currentPage + 1;
+        const newPhotos = await getPhotos(newPage);
+        setPhotos((prev) => [...prev, ...newPhotos]);
+        setCurrentPage(newPage);
+        setLoading(false);
+    };
+
+    const handleScroll = () => {
+        const scrollHeight = document.documentElement.scrollHeight;
+        const scrollTop = window.scrollY;
+        const clientHeight = window.innerHeight;
+
+        if (scrollHeight - scrollTop <= clientHeight + 350 && !loading) {
+            loadMoreMovies();
+        }
+    };
+    return <PhotosGrid photos={photos} />;
 };
 
 export default Home;
