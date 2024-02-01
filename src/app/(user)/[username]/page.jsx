@@ -25,7 +25,6 @@ const Users = () => {
                 if (user) {
                     setUser(user);
                     setError(null);
-
                     const uploaded = await getPhotosByUser({ username: user.username });
                     const liked = await getPhotosByUser({ type: 'likes', username: user.username });
 
@@ -46,7 +45,7 @@ const Users = () => {
             const scrollTop = window.scrollY;
             const clientHeight = window.innerHeight;
 
-            if (scrollHeight - scrollTop <= clientHeight + 450 && !loading) {
+            if (scrollHeight - scrollTop <= clientHeight + 350 && !loading) {
                 loadMorePhotos();
             }
         };
@@ -96,9 +95,14 @@ const Users = () => {
                         <h5 className="text-xl font-medium">{userData.name}</h5>
                         <p className="line-clamp-2 mb-2 font-light text-sm">{userData.bio}</p>
                         <div className="flex gap-3 my-2">
-                            {renderSocial(userData.portfolio_url, <FaGlobe />)}
-                            {renderSocial(`https://www.instagram.com/${userData.instagram_username}`, <FaInstagram />)}
-                            {renderSocial(`https://twitter.com/${userData.twitter_username}`, <FaTwitter />)}
+                            {userData.portfolio_url && (userData.portfolio_url, (<FaGlobe />))}
+                            {userData.instagram_username &&
+                                renderSocial(
+                                    `https://www.instagram.com/${userData.instagram_username}`,
+                                    <FaInstagram />,
+                                )}
+                            {userData.twitter_username &&
+                                renderSocial(`https://twitter.com/${userData.twitter_username}`, <FaTwitter />)}
                         </div>
                         <div className="flex gap-2">
                             <span className="relative pr-3">

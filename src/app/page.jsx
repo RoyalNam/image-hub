@@ -12,7 +12,6 @@ const Home = () => {
         const fetchData = async () => {
             const photos = await getPhotos();
             setPhotos(photos);
-            console.log('photos', photos);
         };
         fetchData();
     }, []);
@@ -39,11 +38,15 @@ const Home = () => {
         const scrollTop = window.scrollY;
         const clientHeight = window.innerHeight;
 
-        if (scrollHeight - scrollTop <= clientHeight + 450 && !loading) {
+        if (scrollHeight - scrollTop <= clientHeight + 350 && !loading) {
             loadMoreMovies();
         }
     };
-    return <PhotosGrid photos={photos} />;
+    return (
+        <div className="py-4">
+            <PhotosGrid photos={photos} />
+        </div>
+    );
 };
 
 export default Home;

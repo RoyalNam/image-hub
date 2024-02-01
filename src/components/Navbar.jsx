@@ -40,6 +40,8 @@ const NavbarContent = () => {
             const q = searchParams.get('q');
             inputRef.current.value = q || '';
             handleSearch();
+        } else {
+            inputRef.current.value = '';
         }
     }, [pathname, searchParams]);
 
@@ -66,7 +68,6 @@ const NavbarContent = () => {
                     per_page: 5,
                     query,
                 });
-                console.log('collection', collections);
 
                 setCollections(collections);
             } catch (error) {
@@ -92,12 +93,12 @@ const NavbarContent = () => {
     };
 
     return (
-        <nav className="h-20 sticky top-0 inset-x-0 bg-white dark:bg-black z-30">
+        <nav className="h-20 sticky top-0 inset-x-0 bg-white dark:bg-black z-30 border-b border-black/10 dark:border-white/10">
             <div className="px-2 md:px-4 flex h-full w-full items-center gap-4">
-                <Link href={'/'} className="h-full">
+                <Link href={'/'} className="h-full hidden md:block">
                     <img src="/myLogo.png" className="h-full object-cover" alt="Logo" />
                 </Link>
-                <div className="relative flex-1">
+                <div className="relative flex-1 px-4 max-w-5xl">
                     <form
                         action="get"
                         onSubmit={handleFormSubmit}
@@ -108,6 +109,7 @@ const NavbarContent = () => {
                             type="search"
                             name=""
                             id=""
+                            placeholder="Search"
                             className="bg-transparent outline-none flex-1 px-3 py-2"
                             onFocus={() => setInputFocused(true)}
                             onChange={handleChange}
