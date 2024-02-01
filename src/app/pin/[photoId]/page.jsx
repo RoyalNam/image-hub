@@ -28,6 +28,7 @@ const Photo = () => {
         };
     }, [loading]);
 
+    // Action
     const handleScroll = () => {
         const scrollHeight = document.documentElement.scrollHeight;
         const scrollTop = window.scrollY;
@@ -38,7 +39,6 @@ const Photo = () => {
         }
     };
 
-    // Action
     const handleDownload = () => {
         if (photoData && photoData.urls.full) {
             fetch(photoData.urls.full)
@@ -67,6 +67,7 @@ const Photo = () => {
             console.error('Error fetching data:', error);
         }
     };
+
     const loadMoreMovies = async () => {
         let photo = await getPhoto(photoId);
         setLoading(true);
@@ -109,7 +110,7 @@ const Photo = () => {
         photoData && (
             <>
                 <div className="relative w-full max-w-6xl mx-auto">
-                    <div className="sticky bg-white dark:bg-black z-40 top-20 pt-2 flex justify-between items-center gap-4">
+                    <div className="sticky bg-white dark:bg-black top-20 pt-2 flex justify-between items-center gap-4">
                         <div className="flex gap-3 py-4">
                             <img
                                 src={photoData.user.profile_image.medium}

@@ -10,6 +10,7 @@ export const searchPhotos = async ({ query, page = 1, collections, color }) => {
                 client_id: ACCESS_KEY,
                 query: query,
                 page: page,
+                per_page: 20,
                 collections: collections,
                 color: color,
             },
@@ -20,10 +21,18 @@ export const searchPhotos = async ({ query, page = 1, collections, color }) => {
     }
 };
 
-export const searchCollectionsOrUsers = async (type = 'users', page = 1) => {
+// Get One
+export const searchCollectionsOrUsers = async ({ type = 'users', per_page = 10, query, page = 1 }) => {
     try {
-        const respond = await axios.get(`${SEARCH_BASE_URL}/${type}?client_id=${ACCESS_KEY}&page=${page}&per_page=20`);
-        return respond.data;
+        const respond = await axios.get(`${SEARCH_BASE_URL}/${type}`, {
+            params: {
+                client_id: ACCESS_KEY,
+                query: query,
+                page: page,
+                per_page: per_page,
+            },
+        });
+        return respond.data.results;
     } catch (err) {
         throw err;
     }

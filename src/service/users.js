@@ -13,10 +13,10 @@ export const getUserProfile = async (username) => {
 };
 
 // photos | likes
-export const getPhotosByUser = async (type = 'photos', username, page, order_by = 'latest') => {
+export const getPhotosByUser = async ({ type = 'photos', username, page = 1, order_by = 'latest' }) => {
     try {
         const response = await axios.get(
-            `${USERS_BASE_URL}/${username}/${type}?client_id=${ACCESS_KEY}&page=${page}&order_by=${order_by}`,
+            `${USERS_BASE_URL}/${username}/${type}?client_id=${ACCESS_KEY}&page=${page}&per_page=20&order_by=${order_by}`,
         );
         return response.data;
     } catch (err) {

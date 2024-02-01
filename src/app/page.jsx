@@ -16,6 +16,7 @@ const Home = () => {
         };
         fetchData();
     }, []);
+
     useEffect(() => {
         window.addEventListener('scroll', handleScroll);
 
@@ -38,7 +39,7 @@ const Home = () => {
         const scrollTop = window.scrollY;
         const clientHeight = window.innerHeight;
 
-        if (scrollHeight - scrollTop <= clientHeight + 350 && !loading) {
+        if (scrollHeight - scrollTop <= clientHeight + 450 && !loading) {
             loadMoreMovies();
         }
     };
