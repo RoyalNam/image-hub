@@ -7,3 +7,18 @@ export const formatNumber = (number) => {
         return (number / 1000000).toFixed(1) + 'M';
     }
 };
+
+export const debounce = (func, delay) => {
+    let timeoutId;
+
+    return (...args) => {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+
+        timeoutId = setTimeout(() => {
+            func(...args);
+            timeoutId = null;
+        }, delay);
+    };
+};
