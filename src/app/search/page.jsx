@@ -7,7 +7,7 @@ import PhotosGrid from '@/components/PhotosGrid';
 const SearchPage = () => {
     const params = useSearchParams();
     const router = useRouter();
-    const q = params.get('q');
+    const { q } = params.get('q');
     const [photosData, setPhotos] = useState([]);
     const [collections, setCollections] = useState([]);
     const [loading, setLoading] = useState(false);

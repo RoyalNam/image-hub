@@ -5,7 +5,7 @@ const { BASE_URL, ACCESS_KEY } = require('@/constants');
 const TOPICS_BASE_URL = `${BASE_URL}/topics`;
 
 // 32/1/2024: Max 20 topic
-export const getTopics = async (page = 2, order_by = 'position') => {
+export const getTopics = async (page = 1, order_by = 'position') => {
     try {
         const respond = await axios.get(
             `${TOPICS_BASE_URL}?client_id=${ACCESS_KEY}&per_page=20&page=${page}&order_by=${order_by}`,
