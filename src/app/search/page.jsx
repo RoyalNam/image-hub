@@ -53,7 +53,7 @@ const SearchPage = () => {
     };
 
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback="loading....">
             {photosData && (
                 <div>
                     {collections.length > 0 && collections[0].tags && (
