@@ -23,7 +23,9 @@ export const getCollection = async (id) => {
 
 export const getCollectionPhotos = async (id, page = 1) => {
     try {
-        const respond = await axios.get(`${COLLECTIONS_BASE_URL}/${id}/photos?client_id=${ACCESS_KEY}&page=${page}`);
+        const respond = await axios.get(
+            `${COLLECTIONS_BASE_URL}/${id}/photos?client_id=${ACCESS_KEY}&page=${page}&per_page=20`,
+        );
         return respond.data;
     } catch (err) {
         throw err;

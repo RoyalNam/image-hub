@@ -6,6 +6,7 @@ import { getPhoto } from '@/service/photos';
 import { formatNumber } from '@/utils';
 import { searchPhotos } from '@/service/search';
 import PhotoGallery from '@/components/PhotoGallery';
+import ErrorDisplay from '@/components/ErrorDisplay';
 
 const Photo = () => {
     const router = useRouter();
@@ -15,6 +16,7 @@ const Photo = () => {
     const [isOverlayVisible, setOverlayVisible] = useState(false);
     const [isEndPage, setIsEndPage] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,7 +29,7 @@ const Photo = () => {
                     setMoreLikePhotos(moreLikes);
                 }
             } catch (error) {
-                console.error('Error fetching data:', error);
+                setError('An error occurred while fetching data. Please try again later.');
             }
         };
         fetchData();
@@ -101,7 +103,9 @@ const Photo = () => {
         </div>
     );
 
-    return (
+    return error ? (
+        <ErrorDisplay error={error} />
+    ) : (
         photoData && (
             <>
                 <div className="relative w-full max-w-6xl mx-auto">
