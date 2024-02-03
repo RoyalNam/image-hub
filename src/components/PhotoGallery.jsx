@@ -1,8 +1,9 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { FaHeart } from 'react-icons/fa';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
-const PhotosGrid = ({ photos }) => {
+const PhotoGallery = ({ photos, title = '', loadMore }) => {
     const router = useRouter();
 
     const PhotoCard = ({ photo }) => (
@@ -26,13 +27,17 @@ const PhotosGrid = ({ photos }) => {
         </div>
     );
 
-    return (
-        <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 space-y-4">
-            {photos.map((item) => (
-                <PhotoCard key={item.id} photo={item} />
-            ))}
-        </div>
+    return photos.length > 0 ? (
+        <InfiniteScroll dataLength={photos.length} next={loadMore} hasMore={true}>
+            <div className="columns-2 md:columns-3 lg:columns-4 xl:columns-5 space-y-4">
+                {photos.map((item) => (
+                    <PhotoCard key={item.id} photo={item} />
+                ))}
+            </div>
+        </InfiniteScroll>
+    ) : (
+        <div className="text-red-500 text-left">No {title} found.</div>
     );
 };
 
-export default PhotosGrid;
+export default PhotoGallery;

@@ -2,7 +2,8 @@
 import React, { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { searchCollectionsOrUsers, searchPhotos } from '@/service/search';
-import PhotosGrid from '@/components/PhotosGrid';
+import PhotoGallery from '@/components/PhotoGallery';
+import { FaUser } from 'react-icons/fa';
 
 const SearchPage = () => {
     return (
@@ -14,15 +15,16 @@ const SearchPage = () => {
 
 const SearchPageContent = () => {
     const searchParams = useSearchParams();
+    const q = searchParams.get('q');
+
     const router = useRouter();
     const [photosData, setPhotos] = useState([]);
-    const [collections, setCollections] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [collectionsData, setCollections] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [isEndPage, setEndPage] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
-            const q = searchParams.get('q');
             const photos = await searchPhotos({ query: q });
             setPhotos(photos);
             const collection = await searchCollectionsOrUsers({ type: 'collections', per_page: 1, query: q });
@@ -31,40 +33,31 @@ const SearchPageContent = () => {
         fetchData();
     }, [searchParams]);
 
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, [loading]);
-
-    const loadMoreMovies = async () => {
-        const q = searchParams.get('q');
-        setLoading(true);
-        const newPage = currentPage + 1;
-        const newPhotos = await searchPhotos({ query: q, page: newPage });
-        setPhotos((prev) => [...prev, ...newPhotos]);
-        setCurrentPage(newPage);
-        setLoading(false);
-    };
-
-    const handleScroll = () => {
-        const scrollHeight = document.documentElement.scrollHeight;
-        const scrollTop = window.scrollY;
-        const clientHeight = window.innerHeight;
-
-        if (scrollHeight - scrollTop <= clientHeight + 150 && !loading) {
-            loadMoreMovies();
+    const loadMore = async () => {
+        if (!isEndPage) {
+            const newPage = currentPage + 1;
+            const newPhotos = await searchPhotos({ query: q, page: newPage });
+            if (newPhotos.length === 0) setEndPage(true);
+            else {
+                setPhotos((prev) => [...prev, ...newPhotos]);
+                setCurrentPage(newPage);
+            }
         }
     };
 
     return (
         photosData && (
             <div>
-                {collections.length > 0 && collections[0].tags && (
+                {collectionsData.length > 0 && collectionsData[0].tags && (
                     <div className="flex gap-4 flex-nowrap my-4 justify-center">
-                        {collections[0].tags.map((item, idx) => (
+                        <button
+                            className="flex items-center gap-1 border px-3 rounded"
+                            onClick={() => router.push(`/search/users?q=${q}`)}
+                        >
+                            <FaUser />
+                            <span>Users</span>
+                        </button>
+                        {collectionsData[0].tags.map((item, idx) => (
                             <button
                                 key={idx}
                                 className="border rounded px-6 py-2 text-nowrap"
@@ -76,7 +69,7 @@ const SearchPageContent = () => {
                     </div>
                 )}
                 <div>
-                    <PhotosGrid photos={photosData} />
+                    <PhotoGallery photos={photosData} loadMore={loadMore} />
                 </div>
             </div>
         )

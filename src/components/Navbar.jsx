@@ -19,6 +19,7 @@ const NavbarContent = () => {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
+    const q = searchParams.get('q');
     const inputRef = useRef();
     const [collectionsData, setCollections] = useState([]);
     const [topicsData, setTopics] = useState([]);
@@ -36,8 +37,7 @@ const NavbarContent = () => {
     }, []);
 
     useEffect(() => {
-        if (pathname === '/search') {
-            const q = searchParams.get('q');
+        if (pathname === '/search' || pathname === '/search/users') {
             inputRef.current.value = q || '';
             handleSearch();
         } else {
@@ -133,7 +133,7 @@ const NavbarContent = () => {
                                                     onClick={() => {
                                                         setCollections([]);
                                                         setInputFocused(false);
-                                                        router.push(`/search?q=${item.title}`);
+                                                        router.push(`/collections/${item.id}`);
                                                     }}
                                                     className=" border-b py-1 rounded cursor-pointer flex items-center gap-4"
                                                 >
@@ -143,7 +143,7 @@ const NavbarContent = () => {
                                                                 key={photo.id}
                                                                 src={photo.urls.small}
                                                                 alt={photo.urls.slug}
-                                                                className="object-cover w-full h-8"
+                                                                className="object-cover w-full aspect-square"
                                                             />
                                                         ))}
                                                     </div>

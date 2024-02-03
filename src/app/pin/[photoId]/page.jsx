@@ -5,39 +5,35 @@ import { FaDownload, FaInfoCircle, FaTimes } from 'react-icons/fa';
 import { getPhoto } from '@/service/photos';
 import { formatNumber } from '@/utils';
 import { searchPhotos } from '@/service/search';
-import PhotosGrid from '@/components/PhotosGrid';
+import PhotoGallery from '@/components/PhotoGallery';
 
 const Photo = () => {
     const router = useRouter();
     const { photoId } = useParams();
-    const [photoData, setPhoto] = useState();
+    const [photoData, setPhoto] = useState(null);
     const [moreLikePhotos, setMoreLikePhotos] = useState([]);
     const [isOverlayVisible, setOverlayVisible] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [isEndPage, setIsEndPage] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
+        const fetchData = async () => {
+            try {
+                if (photoId) {
+                    const photo = await getPhoto(photoId);
+                    setPhoto(photo);
+
+                    const moreLikes = await searchPhotos({ query: photo.tags_preview[0].title });
+                    setMoreLikePhotos(moreLikes);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
         fetchData();
     }, [photoId]);
 
-    useEffect(() => {
-        window.addEventListener('scroll', handleScroll);
-
-        return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, [loading]);
-
     // Action
-    const handleScroll = () => {
-        const scrollHeight = document.documentElement.scrollHeight;
-        const scrollTop = window.scrollY;
-        const clientHeight = window.innerHeight;
-
-        if (scrollHeight - scrollTop <= clientHeight + 350 && !loading) {
-            loadMoreMovies();
-        }
-    };
 
     const handleDownload = () => {
         if (photoData && photoData.urls.full) {
@@ -54,28 +50,27 @@ const Photo = () => {
         }
     };
 
-    const fetchData = async () => {
-        try {
-            if (photoId) {
-                const photo = await getPhoto(photoId);
-                setPhoto(photo);
+    const loadMore = async () => {
+        if (!isEndPage) {
+            try {
+                let photo = await getPhoto(photoId);
+                const newPage = currentPage + 1;
+                const newPhotos = await searchPhotos({ query: photo.tags_preview[0].title, page: newPage });
 
-                const moreLikes = await searchPhotos({ query: photo.tags_preview[0].title });
-                setMoreLikePhotos(moreLikes);
+                if (newPhotos.length === 0) {
+                    setIsEndPage(true);
+                } else {
+                    const uniqueNewPhotos = newPhotos.filter(
+                        (newPhoto) => !moreLikePhotos.some((existingPhoto) => existingPhoto.id === newPhoto.id),
+                    );
+
+                    setMoreLikePhotos((prev) => [...prev, ...uniqueNewPhotos]);
+                    setCurrentPage(newPage);
+                }
+            } catch (error) {
+                console.error('Error loading more photos:', error);
             }
-        } catch (error) {
-            console.error('Error fetching data:', error);
         }
-    };
-
-    const loadMoreMovies = async () => {
-        let photo = await getPhoto(photoId);
-        setLoading(true);
-        const newPage = currentPage + 1;
-        const newPhotos = await searchPhotos({ query: photo.tags_preview[0].title, page: newPage });
-        setMoreLikePhotos((prev) => [...prev, ...newPhotos]);
-        setCurrentPage(newPage);
-        setLoading(false);
     };
 
     // Render
@@ -198,7 +193,7 @@ const Photo = () => {
                 </div>
                 <div className="w-full mt-4">
                     <h4 className="text-3xl font-semibold text-center py-3">More like this</h4>
-                    <PhotosGrid photos={moreLikePhotos} />
+                    <PhotoGallery photos={moreLikePhotos} loadMore={loadMore} />
                 </div>
             </>
         )
